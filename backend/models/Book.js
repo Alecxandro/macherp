@@ -1,4 +1,5 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
+import autopopulate from 'mongoose-autopopulate'
 
 const bookSchema = new mongoose.Schema(
     {
@@ -19,11 +20,14 @@ const bookSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             required: true,
+            autopopulate: true,
         },
     },
     {
         timestamps: true,
     }
-)
+);
 
-export default mongoose.model('Book', bookSchema)
+bookSchema.plugin(autopopulate)
+
+export default mongoose.model('Book', bookSchema);

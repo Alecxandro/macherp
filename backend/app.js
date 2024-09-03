@@ -1,32 +1,28 @@
-import express from 'express';
-import passport from 'passport';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { DBConnection } from './services/db.js';
-import './services/passport.js'
-import router from './Routes.js';
+import './services/passport.js';
+import * as shortcuts from './utils/shortcuts.js';
 
-dotenv.config({ path: './.env' });
-DBConnection();
+shortcuts.initialConfig.dt;
+shortcuts.initialConfig.dbConfig();
 
-const app = express();
+const service = shortcuts.app;
 const port = process.env.PORT || 3001;
 
-app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST'],
-  credentials: true
-}));
+service.use(
+    shortcuts.crs({
+        origin: 'http://localhost:5173',
+        methods: ['GET', 'POST'],
+        credentials: true,
+    })
+);
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+service.use(shortcuts.bodyPrs.urlencoded({ extended: false }));
+service.use(shortcuts.bodyPrs.json());
 
 console.log('JWT Secret:', process.env.JWT_SECRET);
 
-app.use(passport.initialize());
-app.use('/', router)
+service.use(shortcuts.initialConfig.pssprt.initialize());
+service.use('/', shortcuts.rt);
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+service.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
