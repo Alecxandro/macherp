@@ -10,7 +10,7 @@ const port = process.env.PORT || 3001;
 service.use(
     shortcuts.crs({
         origin: 'http://localhost:5173',
-        methods: ['GET', 'POST'],
+        methods: ['GET', 'POST', 'PATCH', 'DELETE'],
         credentials: true,
     })
 );
