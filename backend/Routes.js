@@ -10,6 +10,7 @@ router.post('/user/login', userController.loginUser);
 router.get('/user/profile/:id', authenticateJWT, userController.getUser);
 router.get('/user/listusers', authenticateJWT, userController.getUsers);
 router.patch('/user/update/:id', authenticateJWT, userController.updateUser);
+router.delete('/user/delete/:id', authenticateJWT, userController.deleteUser);
 
 router.get('/book/listbooks', authenticateJWT, bookControler.getBooks);
 router.get('/book/:id', authenticateJWT, bookControler.getBookById);

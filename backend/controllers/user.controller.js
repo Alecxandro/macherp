@@ -15,8 +15,7 @@ export const loginUser = async (req, res) => {
         if (!user) return res.status(401).json({ message: 'User not found' })
 
         const isMatch = await bcrypt.compare(password, user.password)
-        if (!isMatch)
-            return res.status(401).json({ message: 'Invalid credentials' })
+        if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' })
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: '1h',
@@ -73,8 +72,11 @@ export const getUsers = async (req, res) => {
 
 export const updateUser = async (req, res) => {
     const user = await authorizationAction(req, res, User)
-    if (!user) return res.status(403).json({ Error: 'User not found or you not allowed to change other users data' })
-        
+    if (!user)
+        return res
+            .status(403)
+            .json({ Error: 'User not found or you not allowed to change other users data' })
+
     try {
         const updatedUser = await User.findByIdAndUpdate(user._id, req.body, {
             new: true,
@@ -82,7 +84,20 @@ export const updateUser = async (req, res) => {
 
         return res.status(200).json(updatedUser)
     } catch (error) {
-        return res.status(500).json({ ErrorDetails: error.message})
-    }    
+        return res.status(500).json({ ErrorDetails: error.message })
+    }
+}
 
+export const deleteUser = async (req, res) => {
+    if (req.user.isAdmin) {
+        try {
+            const user = await User.findById(req.params.id)
+            await User.findByIdAndDelete(user._id)
+            return res.status(200).json({ message: `User deleted successfully: ${user}` })
+        } catch (error) {
+            return res.status(500).json({ ErrorDetails: error.message })
+        }
+    }
+
+    return res.status(401).json({Error: 'You cannot delete other user profile. Only admin can perform this action.'})
 }

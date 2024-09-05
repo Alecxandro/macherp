@@ -10,14 +10,14 @@ export const authorizationAction = async (req, res, model) => {
     const { isAdmin } = req.user
     const { id } = req.params
     try {
-        const query = isAdmin ? { _id: id } : { _id: id, user: req.user._id }
         if (id === String(req.user._id)) {
             const user = await model.findById(req.user._id)
-            console.log('User fetched:', user)
             return user
         }
+
+        const query = isAdmin ? { _id: id } : { _id: id, user: String(req.user._id) }
+
         const document = await model.findOne(query)
-        console.log('Document fetched:', document)
 
         if (!document) return null
 
